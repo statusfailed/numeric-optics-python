@@ -131,17 +131,13 @@ def update(ε):
 
     return Lens(identity.fwd, update_rev)
 
-def mse():
-    """ Mean-squared-error displacement lens """
-    def mse_rev(A):
-        yhat, ytrue = A
-        if p is None:
-            return None
-        elif type(p) is tuple and type(pdiff) is tuple:
-            return mse_rev((p[0], pdiff[0])), mse_rev((p[1], pdiff[1]))
-        else:
-            return yhat - ytrue
+def mse_rev(args):
+    yhat, ytrue = args
+    if yhat is None:
+        return None
+    elif type(yhat) is tuple and type(ytrue) is tuple:
+        return mse_rev((yhat[0], ytrue[0])), mse_rev((yhat[1], ytrue[1]))
+    else:
+        return yhat - ytrue
 
-    return Lens(identity.fwd, mse_rev)
-
-mse = Lens(identity.fwd, lambda zy: zy[0] - zy[1])
+mse = Lens(identity.fwd, mse_rev)

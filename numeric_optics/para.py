@@ -27,12 +27,15 @@ def to_para(f):
 def initialize_normal(mean, stddev):
     return lambda shape: np.random.normal(mean, stddev, shape)
 
+# Glorot initialization
+# http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf
 def initialize_glorot(shape):
     (b, a) = shape
     stddev = np.sqrt(2.0 / (a + b))
     return np.random.normal(0, stddev, shape)
 
 # A neural network dense layer
+# NOTE: this morphism is a composite of the morphisms "linear", "add", and "activation".
 def dense(shape, activation, initialize_weights=initialize_normal(0, 0.01)):
     """ Dense neural network layer as a morphism of Para """
     # note: shape is opposite order to matrix dimensions (we write (input, output))
@@ -41,8 +44,6 @@ def dense(shape, activation, initialize_weights=initialize_normal(0, 0.01)):
     f = lens.assocL >> (lens.identity @ lens.linear) >> lens.add >> activation
     return Para(p, f)
 
-# Activation layers
-
+# Activation layers as zero-parameter morphisms of Para
 sigmoid = to_para(lens.sigmoid)
 relu    = to_para(lens.relu)
-

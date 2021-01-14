@@ -24,7 +24,6 @@ def train(trainable: TrainableModel, train_x, train_y, num_epochs=1, shuffle_dat
         raise ValueError(err)
 
     param = trainable.model.param
-    fwd   = trainable.model.arrow.fwd
     step  = trainable.to_lens()
     xs    = train_x
     ys    = train_y

@@ -17,7 +17,6 @@ if __name__ == "__main__":
     # one-hot encode with 3 classes
     train_labels = np.eye(3)[train_labels]
 
-
     # An extremely simple model with no hidden layer
     trainable = TrainableModel(
         model=dense((4, 3), activation=lens.sigmoid),
