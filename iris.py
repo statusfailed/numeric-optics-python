@@ -19,10 +19,10 @@ if __name__ == "__main__":
 
     # An extremely simple model with no hidden layer
     trainable = TrainableModel(
-        model=dense((4, 3), activation=lens.sigmoid),
-        update=lens.update(0.01), # Vanilla gradient descent
-        displacement=lens.mse,    # Mean squared error
-        inverse_displacement=lens.identity) # TODO: inverse mean_squared_error map
+        model=dense((4, 3), activation=lens.Sigmoid()),
+        update=lens.Update(0.01), # Vanilla gradient descent
+        displacement=lens.MSE(),    # Mean squared error
+        inverse_displacement=lens.Identity()) # TODO: inverse mean_squared_error map
 
     e_prev = None
     fwd    = trainable.model.arrow.fwd

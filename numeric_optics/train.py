@@ -1,7 +1,7 @@
 import numpy as np
 from dataclasses import dataclass
 
-from numeric_optics.lens import Lens, update, mse, identity
+from numeric_optics.lens import Lens, Update, MSE, Identity
 from numeric_optics.para import Para
 
 @dataclass
