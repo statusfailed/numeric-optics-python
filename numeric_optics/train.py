@@ -5,7 +5,7 @@ from numeric_optics.lens import Lens, update, mse, identity
 from numeric_optics.para import Para
 
 @dataclass
-class TrainableModel:
+class Learner:
     model: Para
     update: Lens
     displacement: Lens
@@ -16,15 +16,15 @@ class TrainableModel:
 
 
 # Train a model using the given update, displacement, and inverse displacement maps
-def train(trainable: TrainableModel, train_x, train_y, num_epochs=1, shuffle_data=True):
+def train(learner: Learner, train_x, train_y, num_epochs=1, shuffle_data=True):
     n = np.shape(train_x)[0]
     m = np.shape(train_y)[0]
     if n != m:
         err = "Mismatch in dimension 0: {} training examples but {} labels".format(n, m)
         raise ValueError(err)
 
-    param = trainable.model.param
-    step  = trainable.to_lens()
+    param = learner.model.param
+    step  = learner.to_lens()
     xs    = train_x
     ys    = train_y
     permutation = np.array(range(0, n))

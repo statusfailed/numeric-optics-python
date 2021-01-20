@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 
-# TODO: remove this, get mnist another way.
-# import keras
 import numpy as np
 import math
 import mnist
 
 import numeric_optics.lens as lens
 from numeric_optics.para import Para, dense, relu, sigmoid, to_para, initialize_glorot
-from numeric_optics.train import TrainableModel, train, accuracy
+from numeric_optics.train import Learner, train, accuracy
 import numeric_optics.convolution as image
 
 # Glorot Uniform initialization for 3x3x1 correlation kernel
@@ -50,7 +48,7 @@ if __name__ == "__main__":
     x_test  = x_test.reshape(x_test.shape + (1,))
 
     # Train with mean squared error and learning rate 0.01
-    trainable = TrainableModel(
+    learner = Learner(
         model=model,
         update=lens.update(0.01),
         displacement=lens.mse,
@@ -58,8 +56,8 @@ if __name__ == "__main__":
 
     # Print diagnostics while training
     e_prev = None
-    fwd    = trainable.model.arrow.fwd
-    for e, j, i, param in train(trainable, x_train, y_train, num_epochs=4, shuffle_data=True):
+    fwd    = learner.model.arrow.fwd
+    for e, j, i, param in train(learner, x_train, y_train, num_epochs=4, shuffle_data=True):
         if j % 10000:
             continue
 
