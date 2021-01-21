@@ -21,9 +21,9 @@ String-diagrammatically, that is:
 where `M` is a matrix (the weights), `b` is a vector (the biases), and `x` is
 the input to the network.
 
-# Demos
+# Experiments
 
-- `iris.py`: simple models for the [iris dataset][iris-dataset]
-- `mnist.py`: (TODO)
+Experiments can be found in the [./experiments](./experiments) directory.
+For example, you can run the `mnist` convolutional neural network experiment as follows:
 
-[iris-dataset]: http://archive.ics.uci.edu/ml/datasets/Iris/
+    python -m experiments.convolutional
