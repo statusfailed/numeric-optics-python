@@ -1,38 +1,54 @@
 #!/usr/bin/env python
 
-import numeric_optics.lens as lens
-
-# TODO: fix imports!
-from numeric_optics.lens import *
-from numeric_optics.para import *
-from numeric_optics.train import *
-
+import sys
 import pandas as pd
+import numpy as np
+import argparse
+
+from experiments.dataset import load_iris
+
+import numeric_optics.lens as lens
+from numeric_optics.para import dense
+from numeric_optics.train import Learner, train, accuracy
+
+_HIDDEN_LAYER_SIZE = 20
 
 if __name__ == "__main__":
-    iris = pd.read_csv('data/iris.csv')
+    parser = argparse.ArgumentParser(description='')
+    parser.add_argument('--iris-data', default='data/iris.csv')
+    parser.add_argument('model', choices=['simple', 'hidden'])
+    args = parser.parse_args()
 
-    train_input = iris[['sepal_length', 'sepal_width', 'petal_length', 'petal_width']].to_numpy()
-    train_labels = np.array([0]*50 + [1]*50 + [2]*50).reshape(-1)
-    # one-hot encode with 3 classes
-    train_labels = np.eye(3)[train_labels]
+    # Decide which model to use
+    if args.model == "simple":
+        # "simple" uses a single dense layer with sigmoid activation (no hidden
+        # units)
+        model = dense((4, 3), activation=lens.sigmoid)
+    if args.model == "hidden":
+        # "hidden" uses two dense layers with sigmoid activation and
+        # _HIDDEN_LAYER_SIZE hidden units.
+        n = _HIDDEN_LAYER_SIZE
+        model = dense((4, n), activation=lens.sigmoid) >> dense((n, 3), activation=lens.sigmoid)
+
+    # Load data from CSV
+    train_input, train_labels = load_iris(args.iris_data)
 
     # An extremely simple model with no hidden layer
-    trainable = TrainableModel(
-        model=dense((4, 3), activation=lens.sigmoid),
+    learner = Learner(
+        model=model,
         update=lens.update(0.01), # Vanilla gradient descent
         displacement=lens.mse,    # Mean squared error
         inverse_displacement=lens.identity) # TODO: inverse mean_squared_error map
 
     e_prev = None
-    fwd    = trainable.model.arrow.fwd
-    for e, j, i, param in train(trainable, train_input, train_labels, num_epochs=200, shuffle_data=True):
+    fwd    = learner.model.arrow.fwd
+    for e, j, i, param in train(learner, train_input, train_labels, num_epochs=400, shuffle_data=True):
+        # print accuracy diagnostic every epoch
         if e == e_prev:
             continue
 
         e_prev = e
         f = lambda x: fwd((param, x)).argmax()
-        # NOTE: this is *training* accuracy
         acc = accuracy(f, train_input, train_labels.argmax(axis=1))
-        print('epoch', e + 1, '\taccuracy {0:.4f}'.format(acc), end='\r')
-    print('')
+        print('epoch', e + 1, '\ttraining accuracy {0:.4f}'.format(acc), end='\r')
+    print('epoch', e + 1, '\ttraining accuracy {0:.4f}'.format(acc))

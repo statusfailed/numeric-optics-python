@@ -2,7 +2,8 @@
 
 import numpy as np
 import math
-import mnist
+
+from experiments.dataset import load_mnist
 
 import numeric_optics.lens as lens
 from numeric_optics.para import Para, dense, relu, sigmoid, to_para, initialize_glorot
@@ -27,25 +28,7 @@ model = Para(a, image.multicorrelate) \
      >> dense((5*5*5, 10), activation=lens.sigmoid)
 
 if __name__ == "__main__":
-    num_classes = 10
-
-    # Load MNIST data
-    x_train = mnist.train_images()
-    y_train = mnist.train_labels()
-    x_test = mnist.test_images()
-    y_test = mnist.test_labels()
-
-    # Normalize data
-    x_train = x_train.astype('float32') / 255
-    x_test  = x_test.astype('float32') / 255
-
-    # one-hot-encode labels
-    y_train = np.identity(num_classes)[y_train]
-    y_test  = np.identity(num_classes)[y_test]
-
-    # Reshape images to (28, 28, 1) - 28x28 pixels with a single color channel.
-    x_train = x_train.reshape(x_train.shape + (1,))
-    x_test  = x_test.reshape(x_test.shape + (1,))
+    (x_train, y_train), (x_test, y_test) = load_mnist()
 
     # Train with mean squared error and learning rate 0.01
     learner = Learner(
@@ -58,6 +41,7 @@ if __name__ == "__main__":
     e_prev = None
     fwd    = learner.model.arrow.fwd
     for e, j, i, param in train(learner, x_train, y_train, num_epochs=4, shuffle_data=True):
+        # only print diagnostics every 10Kth sample
         if j % 10000:
             continue
 
