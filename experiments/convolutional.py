@@ -8,7 +8,7 @@ from experiments.dataset import load_mnist
 import numeric_optics.lens as lens
 from numeric_optics.para import Para, dense, relu, sigmoid, to_para, initialize_glorot
 from numeric_optics.train import Learner, train, accuracy
-import numeric_optics.convolution as image
+import numeric_optics.lens.convolution as image
 
 # Glorot Uniform initialization for 3x3x1 correlation kernel
 limit_a = math.sqrt(6 / (3*3 + 1))
