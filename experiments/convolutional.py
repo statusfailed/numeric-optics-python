@@ -8,23 +8,16 @@ from experiments.dataset import load_mnist
 import numeric_optics.lens as lens
 from numeric_optics.para import Para, dense, relu, sigmoid, to_para
 from numeric_optics.train import Learner, train, accuracy
-import numeric_optics.lens.convolution as image
+# import numeric_optics.lens.convolution as image
+import numeric_optics.para.convolution as image
 
-# Glorot Uniform initialization for 3x3x1 correlation kernel
-limit_a = math.sqrt(6 / (3*3 + 1))
-a = np.random.uniform(-limit_a, limit_a, ((3,3,3,1)))
-
-# Glorot Uniform initialization for 5x5x3 correlation kernel
-limit_b = math.sqrt(6 / (4*4*3 + 1))
-b = np.random.uniform(-limit_b, limit_b, ((5,4,4,3)))
-
-model = Para(a, image.multicorrelate) \
+model = image.multicorrelate((3,3,3,1)) \
      >> relu \
-     >> to_para(image.max_pool_3d(2, 2)) \
-     >> Para(b, image.multicorrelate) \
+     >> image.max_pool_3d(2, 2) \
+     >> image.multicorrelate((5,4,4,3)) \
      >> relu \
-     >> to_para(image.max_pool_3d(2, 2)) \
-     >> to_para(image.flatten) \
+     >> image.max_pool_3d(2, 2) \
+     >> image.flatten \
      >> dense((5*5*5, 10), activation=lens.sigmoid)
 
 if __name__ == "__main__":

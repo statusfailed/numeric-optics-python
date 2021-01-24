@@ -23,7 +23,8 @@ def train(learner: Learner, train_x, train_y, num_epochs=1, shuffle_data=True):
         err = "Mismatch in dimension 0: {} training examples but {} labels".format(n, m)
         raise ValueError(err)
 
-    param = learner.model.param
+    # get initial parameters
+    param = learner.model.param()
     step  = learner.to_lens()
     xs    = train_x
     ys    = train_y
