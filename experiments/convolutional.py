@@ -6,7 +6,7 @@ import math
 from experiments.dataset import load_mnist
 
 import numeric_optics.lens as lens
-from numeric_optics.para import Para, dense, relu, sigmoid, to_para, initialize_glorot
+from numeric_optics.para import Para, dense, relu, sigmoid, to_para
 from numeric_optics.train import Learner, train, accuracy
 import numeric_optics.lens.convolution as image
 
