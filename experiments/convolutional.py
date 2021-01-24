@@ -7,7 +7,8 @@ from experiments.dataset import load_mnist
 
 import numeric_optics.lens as lens
 from numeric_optics.para import Para, dense, relu, sigmoid, to_para
-from numeric_optics.train import Learner, train, accuracy
+from numeric_optics.learner import Learner, gd, mse
+from numeric_optics.train import train, accuracy
 # import numeric_optics.lens.convolution as image
 import numeric_optics.para.convolution as image
 
@@ -26,9 +27,8 @@ if __name__ == "__main__":
     # Train with mean squared error and learning rate 0.01
     learner = Learner(
         model=model,
-        update=lens.update(0.01),
-        displacement=lens.mse,
-        inverse_displacement=lens.identity) # TODO: fix
+        update=gd(0.01),
+        displacement=mse)
 
     # Print diagnostics while training
     e_prev = None

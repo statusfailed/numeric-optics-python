@@ -1,19 +1,5 @@
 import numpy as np
-from dataclasses import dataclass
-
-from numeric_optics.lens import Lens, update, mse, identity
-from numeric_optics.para import Para
-
-@dataclass
-class Learner:
-    model: Para
-    update: Lens
-    displacement: Lens
-    inverse_displacement: Lens
-
-    def to_lens(self):
-        return (self.update @ self.inverse_displacement) >> self.model.arrow >> self.displacement
-
+from numeric_optics.learner import Learner
 
 # Train a model using the given update, displacement, and inverse displacement maps
 def train(learner: Learner, train_x, train_y, num_epochs=1, shuffle_data=True):

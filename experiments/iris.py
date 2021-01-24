@@ -9,7 +9,8 @@ from experiments.dataset import load_iris
 
 import numeric_optics.lens as lens
 from numeric_optics.para import dense
-from numeric_optics.train import Learner, train, accuracy
+from numeric_optics.learner import Learner, gd, mse
+from numeric_optics.train import train, accuracy
 
 _HIDDEN_LAYER_SIZE = 20
 
@@ -36,9 +37,8 @@ if __name__ == "__main__":
     # An extremely simple model with no hidden layer
     learner = Learner(
         model=model,
-        update=lens.update(0.01), # Vanilla gradient descent
-        displacement=lens.mse,    # Mean squared error
-        inverse_displacement=lens.identity) # TODO: inverse mean_squared_error map
+        update=gd(0.01), # Vanilla gradient descent
+        displacement=mse)    # Mean squared error
 
     e_prev = None
     fwd    = learner.model.arrow.fwd

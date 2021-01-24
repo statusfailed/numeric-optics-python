@@ -113,31 +113,3 @@ def relu_rev(args):
 
 sigmoid = Lens(sigmoid_fwd, sigmoid_rev)
 relu = Lens(relu_fwd, relu_rev)
-
-###############################
-# Update and loss functions
-
-def update(ε):
-    """ The SGD update lens, parametrised by learning rate ε """
-    def update_rev(P):
-        p, pdiff = P
-
-        if p is None:
-            return None
-        elif type(p) is tuple and type(pdiff) is tuple:
-            return update_rev((p[0], pdiff[0])), update_rev((p[1], pdiff[1]))
-        else:
-            return p - ε * pdiff
-
-    return Lens(identity.fwd, update_rev)
-
-def mse_rev(args):
-    yhat, ytrue = args
-    if yhat is None:
-        return None
-    elif type(yhat) is tuple and type(ytrue) is tuple:
-        return mse_rev((yhat[0], ytrue[0])), mse_rev((yhat[1], ytrue[1]))
-    else:
-        return yhat - ytrue
-
-mse = Lens(identity.fwd, mse_rev)
