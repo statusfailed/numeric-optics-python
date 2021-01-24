@@ -11,14 +11,14 @@ from numeric_optics.train import Learner, train, accuracy
 # import numeric_optics.lens.convolution as image
 import numeric_optics.para.convolution as image
 
-model = image.multicorrelate((3,3,3,1)) \
+model = image.correlate_2d(kernel_shape=(3,3), input_channels=1, output_channels=3) \
      >> relu \
-     >> image.max_pool_3d(2, 2) \
-     >> image.multicorrelate((5,4,4,3)) \
+     >> image.max_pool_2d(2, 2) \
+     >> image.correlate_2d(kernel_shape=(4,4), input_channels=3, output_channels=5) \
      >> relu \
-     >> image.max_pool_3d(2, 2) \
+     >> image.max_pool_2d(2, 2) \
      >> image.flatten \
-     >> dense((5*5*5, 10), activation=lens.sigmoid)
+     >> dense((5*5*5, 10), activation=lens.sigmoid) # 5*5 pixels *5 channels
 
 if __name__ == "__main__":
     (x_train, y_train), (x_test, y_test) = load_mnist()

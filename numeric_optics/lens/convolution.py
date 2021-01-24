@@ -39,7 +39,7 @@ def unflatten(args):
 flatten = Lens(np.ndarray.flatten, unflatten)
 
 # Max pooling layer with kernel width, height of (kh, kw)
-def max_pool_2d(kh, kw):
+def max_pool_2d_onechannel(kh, kw):
     def max_pool_fwd(m):
         # note: assumes 2D array
         h, w = m.shape
@@ -154,16 +154,18 @@ def multicorrelate_volume_rev(ks, a, dys):
         dkss.append(dks)
     return np.array(dkss), da
 
+# TODO: Vectorise fully. Currently uses two nested for loops.
 multicorrelate = Lens(
     lambda ksa: multicorrelate_volume_fwd(ksa[0], ksa[1]), 
     lambda kay: multicorrelate_volume_rev(kay[0][0], kay[0][1], kay[1]))
 
 
 # Max Pooling for images with channels
-def max_pool_3d(kh, kw):
-    lens = max_pool_2d(kh, kw)
+# TODO: vectorise this
+def max_pool_2d(kh, kw):
+    lens = max_pool_2d_onechannel(kh, kw)
 
-    def max_pool_3d_fwd(m):
+    def max_pool_2d_fwd(m):
         # note: assumes 2D array
         h, w, c = m.shape
 
@@ -173,7 +175,7 @@ def max_pool_3d(kh, kw):
 
         return acc
 
-    def max_pool_3d_rev(args):
+    def max_pool_2d_rev(args):
         x, dy = args
         h, w, c = x.shape
 
@@ -183,4 +185,4 @@ def max_pool_3d(kh, kw):
 
         return dx
 
-    return Lens(max_pool_3d_fwd, max_pool_3d_rev)
+    return Lens(max_pool_2d_fwd, max_pool_2d_rev)
