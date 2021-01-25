@@ -7,7 +7,7 @@ from experiments.dataset import load_mnist
 
 import numeric_optics.lens as lens
 from numeric_optics.para import Para, dense, relu, sigmoid, to_para
-from numeric_optics.learner import Learner, gd, mse
+from numeric_optics.learner import Learner, gd, momentum, mse
 from numeric_optics.train import train, accuracy
 # import numeric_optics.lens.convolution as image
 import numeric_optics.para.convolution as image
@@ -27,7 +27,7 @@ if __name__ == "__main__":
     # Train with mean squared error and learning rate 0.01
     learner = Learner(
         model=model,
-        update=gd(0.01),
+        update=momentum(ε=0.01, γ=0.1),
         displacement=mse)
 
     # Print diagnostics while training
@@ -39,7 +39,7 @@ if __name__ == "__main__":
             continue
 
         e_prev = e
-        f = lambda x: fwd((param, x)).argmax()
+        f = lambda x: fwd((param[1], x)).argmax()
         # NOTE: this is *TEST* accuracy, unlike iris experiment.
         acc = accuracy(f, x_test, y_test.argmax(axis=1))
         print('epoch', e, 'sample', j, '\taccuracy {0:.4f}'.format(acc), sep='\t')

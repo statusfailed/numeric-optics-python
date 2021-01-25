@@ -37,8 +37,9 @@ if __name__ == "__main__":
     # An extremely simple model with no hidden layer
     learner = Learner(
         model=model,
-        update=momentum(ε=0.01, γ=0.1), # Vanilla gradient descent
-        displacement=mse)    # Mean squared error
+        update=gd(ε=0.01), # Vanilla gradient descent
+        displacement=mse)  # Mean squared error
+        # update=momentum(ε=0.01, γ=0.1), # Vanilla gradient descent
 
     e_prev = None
     fwd    = learner.model.arrow.fwd
@@ -48,7 +49,6 @@ if __name__ == "__main__":
             continue
 
         e_prev = e
-        # import ipdb; ipdb.set_trace()
         f = lambda x: fwd((param[1], x)).argmax()
         acc = accuracy(f, train_input, train_labels.argmax(axis=1))
         print('epoch', e + 1, '\ttraining accuracy {0:.4f}'.format(acc), end='\r')

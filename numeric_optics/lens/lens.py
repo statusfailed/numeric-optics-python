@@ -68,6 +68,15 @@ def assocR_fwd(t):
 assocL = Lens(assocL_fwd, lambda xx: assocR_fwd(xx[1]))
 assocR = Lens(assocR_fwd, lambda xx: assocL_fwd(xx[1]))
 
+def unit_of(x):
+    """ Map a point A to the corresponding unit object """
+    if x is None:
+        return None
+    elif type(x) is tuple:
+        return unit_of(x[0]), unit_of(x[1])
+    else:
+        return None
+
 def zero_of(x):
     """ Map a point A to the zero map of its type of changes (0 : I → A') """
     if x is None:

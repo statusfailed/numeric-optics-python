@@ -37,7 +37,7 @@ if __name__ == "__main__":
     # An extremely simple model with no hidden layer
     learner = Learner(
         model=model,
-        update=gd(0.01), # Vanilla gradient descent
+        update=gd(0.01),     # Vanilla gradient descent
         displacement=mse)    # Mean squared error
 
     e_prev = None
@@ -48,7 +48,7 @@ if __name__ == "__main__":
             continue
 
         e_prev = e
-        f = lambda x: fwd((param, x)).argmax()
+        f = lambda x: fwd((param[1], x)).argmax()
         acc = accuracy(f, train_input, train_labels.argmax(axis=1))
         print('epoch', e + 1, '\ttraining accuracy {0:.4f}'.format(acc), end='\r')
     print('epoch', e + 1, '\ttraining accuracy {0:.4f}'.format(acc))

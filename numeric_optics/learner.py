@@ -1,5 +1,6 @@
 import numpy as np
 from dataclasses import dataclass
+from typing import Any
 
 import numeric_optics.lens as lens
 from numeric_optics.lens import Lens, identity
@@ -17,37 +18,42 @@ class Update:
     update: Lens
 
     # P → S(P) -- choose an initial S(P) based on initial params
-    initialize = lambda p: None
+    initialize: Any = lens.unit_of
 
 @dataclass
 class Learner:
     model: Para
-    update: Lens
+    update: Update
     displacement: Displacement
 
     def to_lens(self):
         displacement = self.displacement.displacement
         inverse_displacement = self.displacement.inverse
-        return (self.update @ inverse_displacement) >> self.model.arrow >> displacement
+        update = self.update.update
+        return (update @ inverse_displacement) >> self.model.arrow >> displacement
 
 # Vanille gradient descent update lens
 def gd_update(ε):
     """ The vanilla gradient-descent update lens, parametrised by a learning rate ε """
-    def update_rev(P):
-        p, pdiff = P
+    # args : S(P) × P
+    # with   S(P) = I
+    # returns: S(P) × P
+    def update_rev(args):
+        (sp, p), pdiff = args
 
-        if p is None:
-            return None
-        elif type(p) is tuple and type(pdiff) is tuple:
-            return update_rev((p[0], pdiff[0])), update_rev((p[1], pdiff[1]))
+        if sp is None and p is None:
+            return (None, None)
+        elif type(p) is tuple and type(pdiff) is tuple and type(sp) is tuple:
+            rv0, rp0 = update_rev(((sp[0], p[0]), pdiff[0]))
+            rv1, rp1 = update_rev(((sp[1], p[1]), pdiff[1]))
+            return (rv0, rv1), (rp0, rp1)
         else:
-            return p - ε * pdiff
+            return None, p - ε * pdiff
 
-    return Lens(identity.fwd, update_rev)
+    return Lens(lens.snd.fwd, update_rev)
 
-gd = gd_update
-# def gd(ε):
-    # return Update(update=gd_update(ε), initialize=lambda p: None)
+def gd(ε):
+    return Update(update=gd_update(ε), initialize=lens.unit_of)
 
 def momentum_update(ε, γ):
     """ Momentum gradient descent, with learning rate ε and momentum γ """
@@ -69,10 +75,8 @@ def momentum_update(ε, γ):
 
     return Lens(lens.snd.fwd, momentum_rev)
 
-momentum = momentum_update
-
-# def momentum(ε, γ):
-    # return Update(update=momentum_update(ε, γ), initialize=lens.zero_of)
+def momentum(ε, γ):
+    return Update(update=momentum_update(ε, γ), initialize=lens.zero_of)
 
 
 # Mean-squared-error displacement map

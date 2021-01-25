@@ -10,10 +10,9 @@ def train(learner: Learner, train_x, train_y, num_epochs=1, shuffle_data=True):
         err = "Mismatch in dimension 0: {} training examples but {} labels".format(n, m)
         raise ValueError(err)
 
-    # get initial parameters
-    # TODO: use Update.initialize instead of zero_of
+    # get initial value of S(P) × P
     p0 = learner.model.param()
-    param = lens.zero_of(p0), p0
+    param = learner.update.initialize(p0), p0
 
     step  = learner.to_lens()
     xs    = train_x
