@@ -30,7 +30,7 @@ if __name__ == "__main__":
         layers.Dense(_NUM_CLASSES, activation="sigmoid"), # TODO: change me to softmax TODO
     ])
 
-    opt = tf.keras.optimizers.SGD(learning_rate=0.01, momentum=0.0, nesterov=False, decay=0)
+    opt = tf.keras.optimizers.SGD(learning_rate=0.01, momentum=0.1, nesterov=False, decay=0)
     sched = tf.keras.callbacks.LearningRateScheduler(fixed_learning_rate_scheduler)
 
     model.summary()
