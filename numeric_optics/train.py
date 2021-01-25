@@ -1,5 +1,6 @@
 import numpy as np
 from numeric_optics.learner import Learner
+import numeric_optics.lens as lens
 
 # Train a model using the given update, displacement, and inverse displacement maps
 def train(learner: Learner, train_x, train_y, num_epochs=1, shuffle_data=True):
@@ -10,7 +11,10 @@ def train(learner: Learner, train_x, train_y, num_epochs=1, shuffle_data=True):
         raise ValueError(err)
 
     # get initial parameters
-    param = learner.model.param()
+    # TODO: use Update.initialize instead of zero_of
+    p0 = learner.model.param()
+    param = lens.zero_of(p0), p0
+
     step  = learner.to_lens()
     xs    = train_x
     ys    = train_y
