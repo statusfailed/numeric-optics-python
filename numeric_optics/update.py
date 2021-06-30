@@ -81,3 +81,26 @@ def momentum_update(ε, γ):
 
 def momentum(ε, γ):
     return Update(update=momentum_update(ε, γ), initialize=lens.zero_of)
+
+
+def rda_momentum_update(γ):
+    def rda_momentum_rev(args):
+        (v, p), pdiff = args
+
+        if v is None and p is None and pdiff is None:
+            # Unit object
+            return (None, None)
+        elif type(v) is tuple and type(p) is tuple and type(pdiff) is tuple:
+            # NOTE: because we return TWO results, we have to "unzip" them.
+            rv0, rp0 = rda_momentum_rev(((v[0], p[0]), pdiff[0]))
+            rv1, rp1 = rda_momentum_rev(((v[1], p[1]), pdiff[1]))
+            return (rv0, rv1), (rp0, rp1)
+        else:
+            # all must be arrays
+            vdiff = pdiff + γ * v
+            return vdiff, p + vdiff
+
+    return Lens(lens.snd.fwd, rda_momentum_rev)
+
+def rda_momentum(γ):
+    return Update(update=rda_momentum_update(γ), initialize=lens.zero_of)
