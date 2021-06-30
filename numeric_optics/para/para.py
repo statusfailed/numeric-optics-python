@@ -38,3 +38,8 @@ def dense(shape, activation, initialize_weights=initialize.normal(0, 0.01)):
 # Activation layers as zero-parameter morphisms of Para
 sigmoid = to_para(lens.sigmoid)
 relu    = to_para(lens.relu)
+
+def linear(shape, initialize_weights=initialize.normal(0, 0.01)):
+    a, b = shape
+    p = lambda: initialize_weights((b, a))
+    return Para(p, lens.linear)

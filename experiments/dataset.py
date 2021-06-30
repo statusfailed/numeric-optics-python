@@ -2,6 +2,10 @@ import pandas as pd
 import numpy as np
 import mnist
 
+mnist.temporary_dir = lambda: 'data/'
+np.random.seed(2)
+
+
 def load_iris(path):
     iris = pd.read_csv(path)
 

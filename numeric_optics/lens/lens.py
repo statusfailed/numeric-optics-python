@@ -97,8 +97,7 @@ def linear_fwd(mx):
 
 def linear_rev(mxy):
     """ Reverse map of a linear layer """
-    mx, y = mxy
-    m, x = mx
+    (m, x), y = mxy
     return (np.outer(y, x), m.T @ y)
 
 linear = Lens(linear_fwd, linear_rev)
