@@ -11,7 +11,7 @@ import numeric_optics.lens as lens
 from numeric_optics.para import dense, linear
 from numeric_optics.supervised import train_supervised, supervised_step, mse_loss, learning_rate
 from numeric_optics.update import gd, rda
-from numeric_optics.train import accuracy
+from numeric_optics.statistics import accuracy
 
 _HIDDEN_LAYER_SIZE = 20
 
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     step, param = supervised_step(model, rda, mse_loss, learning_rate(η=-0.01))
 
     e_prev = None
-    fwd = model.arrow.fwd
+    fwd = model.arrow.arrow.fwd
     for e, j, i, param in train_supervised(step, param, train_input, train_labels, num_epochs=400, shuffle_data=True):
         # print accuracy diagnostic every epoch
         if e == e_prev:

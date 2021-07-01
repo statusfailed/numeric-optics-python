@@ -6,9 +6,8 @@ import math
 from experiments.dataset import load_mnist
 
 import numeric_optics.lens as lens
-from numeric_optics.para import Para, dense, relu, sigmoid, to_para
-from numeric_optics.learner import Learner, gd, momentum, mse
-from numeric_optics.train import train, accuracy
+from numeric_optics.para import ParaInit, dense, relu
+from numeric_optics.statistics import accuracy
 import numeric_optics.para.convolution as image
 
 from numeric_optics.update import rda_momentum
@@ -30,7 +29,7 @@ if __name__ == "__main__":
 
     # Print diagnostics while training
     e_prev = None
-    fwd    = model.arrow.fwd
+    fwd    = model.arrow.arrow.fwd
     for e, j, i, param in train_supervised(step, param, x_train, y_train, num_epochs=4, shuffle_data=True):
         # only print diagnostics every 10Kth sample
         if j % 10000:
@@ -43,5 +42,5 @@ if __name__ == "__main__":
         print('epoch', e, 'sample', j, '\taccuracy {0:.4f}'.format(acc), sep='\t')
 
     # final accuracy
-    acc = accuracy(f, x_test, y_test.argmax(axis=1))
+    acc = accuracy(predict, x_test, y_test.argmax(axis=1))
     print('final accuracy: {0:.4f}'.format(acc))

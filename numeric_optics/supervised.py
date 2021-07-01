@@ -4,8 +4,8 @@ from typing import Any
 
 import numeric_optics.lens as lens
 from numeric_optics.lens import Lens, identity
-from numeric_optics.para import Para
-from numeric_optics.update import Update
+from numeric_optics.para import Para, ParaInit
+from numeric_optics.update import Update, apply_update
 
 # Loss : (B × B → L, B × B × L' → B' × B')
 # LR : (L → I, L × I' → L')
@@ -37,10 +37,13 @@ def mse_rev(args):
 mse_loss = Lens(mse_fwd, mse_rev)
 
 # Returns a function of type P × A × B
-def supervised_step(model: Para, update: Update, loss: Lens, learning_rate: Lens):
+def supervised_step(model: ParaInit, update: Update, loss: Lens, learning_rate: Lens):
+    model_arrow = model.arrow.arrow # ParaInit → Para → Lens
+
     # Create step function
     # (B × (S(P) × P)) × A
-    morphism = ((lens.identity @ update.update) @ lens.identity) >> lens.assocL >> (lens.identity @ model.arrow) >> loss >> learning_rate
+    morphism = ((lens.identity @ update.update) @ lens.identity) >> lens.assocL >> (lens.identity @ model_arrow) >> loss >> learning_rate
+
     def step(b, p, a):
         # NOTE: it's important we pass "None" as an input here: this is because
         # the type of the reverse map is P × A × B × I → P × A × B,
