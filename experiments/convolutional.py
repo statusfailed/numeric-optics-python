@@ -23,6 +23,7 @@ model = image.correlate_2d(kernel_shape=(3,3), input_channels=1, output_channels
      >> dense((5*5*5, 10), activation=lens.sigmoid) # 5*5 pixels *5 channels
 
 if __name__ == "__main__":
+    print("NOTE: ensure you run ./get-mnist-dataset.sh to download the MNIST dataset first, otherwise this may hang trying to download it!")
     (x_train, y_train), (x_test, y_test) = load_mnist()
 
     step, param = supervised_step(model, rda_momentum(γ=-0.1), Para(mse_loss), to_para(learning_rate(η=-0.01)))

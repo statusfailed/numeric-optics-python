@@ -19,6 +19,16 @@ You can now run the following examples:
 - [MNIST dataset](http://yann.lecun.com/exdb/mnist/)
   - A convolutional model `python -m experiments.convolutional`
 
+## Data
+
+To download the `iris` dataset, run
+
+    ./get-iris-dataset.sh
+
+To download the `mnist` dataset, run
+
+    ./get-mnist-dataset.sh
+
 ## Equivalent Keras Experiments
 
 For each experiment, we provide an equivalent written in [keras][keras].
