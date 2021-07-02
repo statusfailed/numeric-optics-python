@@ -53,20 +53,27 @@ And you can run each experiment as follows:
 # Constructing a model
 
 Models are built using composition `>>` and tensoring `@` of basic primitives.
-For example, the lens representing a neural network dense layer is constructed as follows:
+For example, one can construct a neural network's dense layer as the composition of three `ParaInit` lenses:
 
-    assocL >> (identity @ linear) >> add >> activation
+    linear >> bias >> activation
 
-String-diagrammatically, that is:
+Which is depicted diagrammatically as the Para map:
 
-    b -----------------\
-                        \
-    M ---\               [ + ] --- [ activation ] ----
-          [ linear ] ---/
-    x ---/
+               M                B
+               ↓        B       ↓
+    A --- [  linear ] ----- [ bias ] --- [ activation ] ----
 
 where:
 
 - `M` is a matrix (the weights)
-- `b` is a vector (the biases)
-- `x` is a vector (the input to the network)
+- `B` is a vector (the biases)
+- `A` is a vector (the input to the network)
+
+Note that as a "normal" string diagram, this is written as follows:
+
+    B -----------------\
+                        \
+    M ---\               [ + ] --- [ activation ] ---- B
+          [ linear ] ---/
+    A ---/
+
