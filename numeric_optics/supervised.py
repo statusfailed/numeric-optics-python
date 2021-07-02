@@ -40,10 +40,10 @@ mse_loss = Lens(mse_fwd, mse_rev)
 def supervised_step(model: ParaInit, update: Update, loss: Lens, learning_rate: Lens):
     model_arrow = model.arrow.arrow # ParaInit → Para → Lens
 
-    # Create step function
-    # (B × (S(P) × P)) × A
     morphism = ((lens.identity @ update.update) @ lens.identity) >> lens.assocL >> (lens.identity @ model_arrow) >> loss >> learning_rate
 
+    # Create step function to iterate parameter updates
+    # (B × (S(P) × P)) × A → P
     def step(b, p, a):
         # NOTE: it's important we pass "None" as an input here: this is because
         # the type of the reverse map is P × A × B × I → P × A × B,
@@ -58,9 +58,17 @@ def supervised_step(model: ParaInit, update: Update, loss: Lens, learning_rate: 
     return step, (param, p0)
     # return morphism, (param, p0)
 
-# TODO?
-# def supervised_step_para(model: Para, update: Update, loss: Para, cap: Para):
-    # bend >> apply_update(update, model) >> loss >> cap
+def supervised_step_para(model: ParaInit, update: Update, loss: Para, cap: Para):
+    assert type(model) is ParaInit
+    model_with_update = apply_update(model, update)
+    learner = model_with_update.arrow >> (loss >> cap)
+
+    def step(b, p, a):
+        # rev : (((I × B) × P) × A) × I' → (((I' × B') × P') × A')
+        (((_, _), p_new), _) = learner.arrow.rev( ((((None, b), p), a), None) )
+        return p_new
+
+    return step, model_with_update.param()
 
 # step : (S(P) × P) × A × B → (S(P) × P)
 # initial_parameters : S(P) × P

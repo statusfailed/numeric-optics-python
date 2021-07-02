@@ -8,8 +8,8 @@ import argparse
 from experiments.dataset import load_iris
 
 import numeric_optics.lens as lens
-from numeric_optics.para import dense, linear
-from numeric_optics.supervised import train_supervised, supervised_step, mse_loss, learning_rate
+from numeric_optics.para import Para, to_para, dense, linear
+from numeric_optics.supervised import train_supervised, supervised_step, supervised_step_para, mse_loss, learning_rate
 from numeric_optics.update import gd, rda
 from numeric_optics.statistics import accuracy
 
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     train_input, train_labels = load_iris(args.iris_data)
 
     # Create the "step" function P × A × B → P
-    step, param = supervised_step(model, rda, mse_loss, learning_rate(η=-0.01))
+    step, param = supervised_step_para(model, rda, Para(mse_loss), to_para(learning_rate(η=-0.01)))
 
     e_prev = None
     fwd = model.arrow.arrow.fwd

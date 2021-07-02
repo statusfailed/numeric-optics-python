@@ -20,7 +20,7 @@ def apply_update(para_init: para.ParaInit, update: Update):
     def apply_update_param():
         p0 = para_init.param()
         return update.initialize(p0), p0
-    return para.ParaInit(apply_update_param, update.update >> para_init.arrow)
+    return para.ParaInit(apply_update_param, para.Para((update.update @ lens.identity) >> para_init.arrow.arrow))
 
 
 def rda_update_fwd(args):
