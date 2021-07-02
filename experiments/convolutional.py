@@ -11,7 +11,7 @@ from numeric_optics.statistics import accuracy
 import numeric_optics.para.convolution as image
 
 from numeric_optics.update import rda_momentum
-from numeric_optics.supervised import supervised_step_para, train_supervised, mse_loss, learning_rate
+from numeric_optics.supervised import supervised_step, train_supervised, mse_loss, learning_rate
 
 model = image.correlate_2d(kernel_shape=(3,3), input_channels=1, output_channels=3) \
      >> relu \
@@ -25,7 +25,7 @@ model = image.correlate_2d(kernel_shape=(3,3), input_channels=1, output_channels
 if __name__ == "__main__":
     (x_train, y_train), (x_test, y_test) = load_mnist()
 
-    step, param = supervised_step_para(model, rda_momentum(γ=-0.1), Para(mse_loss), to_para(learning_rate(η=-0.01)))
+    step, param = supervised_step(model, rda_momentum(γ=-0.1), Para(mse_loss), to_para(learning_rate(η=-0.01)))
 
     # Print diagnostics while training
     e_prev = None
