@@ -22,10 +22,24 @@ def learning_rate(η: float):
 
     return Lens(learning_rate_fwd, learning_rate_rev)
 
-# TODO: FIXME!
+def rda_learning_rate(η: float):
+    # note: rev creates constant array of η based on dimensions of loss
+    def learning_rate_fwd(loss):
+        return None
+
+    def learning_rate_rev(args):
+        loss, unit = args
+        assert unit is None
+        # NOTE: Here, learning rate η is not constant:
+        # instead, we *scale* it by the (forward) loss
+        return loss * np.array([η])
+
+    return Lens(learning_rate_fwd, learning_rate_rev)
+
 def mse_fwd(args):
     y, yhat = args
-    return np.array([0]) # TODO: FIXME!
+    loss = np.sum(0.5 * (y - yhat)**2)
+    return np.array([loss])
 
 def mse_rev(args):
     # note: 'loss' represents a *change* in loss, and is normally a constant-
