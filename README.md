@@ -3,6 +3,8 @@
 A python library for constructing and training neural networks based on lenses
 and reverse derivatives.
 
+Tested with Python 3.9
+
 # Experiments / Usage Examples
 
 Examples of model construction and training can be found in the
